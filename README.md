@@ -1,108 +1,106 @@
-# مشروع تخرج: فاحص أمان كلمات المرور ببنية سحابية حديثة (Serverless)
+# Graduation Project: Cloud-Native Serverless Password Security Analyzer
 
-## 1. ملخص تنفيذي (Abstract)
+## 1. Executive Summary (Abstract)
 
-يهدف هذا المشروع إلى تصميم وتنفيذ أداة ويب عالية الأمان لتحليل قوة كلمات المرور والتحقق من انكشافها في تسريبات البيانات المعروفة. يتميز المشروع بتبني بنية معمارية حديثة (JAMstack) تعتمد على واجهة أمامية ثابتة (Static Frontend) ودوال عديمة الخادم (Serverless Functions) للاستضافة على منصة Netlify.
+This project designs and implements a high-security web application for analyzing password strength and verifying exposure in known data breaches. The project features a modern JAMstack architecture, leveraging a static frontend and Serverless Functions hosted on the Netlify platform.
 
-يتمحور التصميم حول مبدأ "الخصوصية أولاً" (Privacy-by-Design) من خلال تطبيق تقنية **K-Anonymity** عند الاستعلام عن واجهة برمجة تطبيقات (Have I Been Pwned)، مما يضمن عدم إرسال كلمة مرور المستخدم أو بصمتها الكاملة عبر الإنترنت.
+The design is centered on a "Privacy-by-Design" principle by implementing the **K-Anonymity** technique when querying the "Have I Been Pwned" (HIBP) API. This ensures that the user's password, or its full hash, is never transmitted over the internet.
 
-**الكلمات المفتاحية:** *أمن المعلومات، كلمات المرور، K-Anonymity، الدوال عديمة الخادم (Serverless)، Netlify، Zxcvbn، HIBP.*
-
----
-
-## 2. بيان المشكلة وأهمية البحث
-
-تُعد كلمات المرور خط الدفاع الأول في تأمين الحسابات الرقمية. مع تزايد وتيرة الهجمات السيبرانية وتسريبات البيانات الضخمة، أصبح المستخدم العادي عُرضة لخطر اختراق حساباته بسبب استخدام كلمات مرور ضعيفة أو مُعاد استخدامها أو مُسرّبة مسبقاً. تفتقر العديد من الأدوات الحالية إلى الشفافية أو تتطلب إرسال كلمة المرور بشكل صريح إلى خادم مركزي، مما يخلق مخاطر أمنية إضافية.
-
-يأتي هذا المشروع كحل لهذه المشكلة، مقدماً أداة شفافة وآمنة توازن بين سهولة الاستخدام وأعلى معايير الخصوصية.
+**Keywords:** *Information Security, Passwords, K-Anonymity, Serverless Functions, Netlify, Zxcvbn, HIBP.*
 
 ---
 
-## 3. المنهجية المعمارية والأمنية (لماذا هذا التصميم؟)
+## 2. Problem Statement & Significance
 
-تم اتخاذ قرارات هندسية محددة لضمان أداء التطبيق وأمانه وقابليته للتطوير، وهو ما يعكس الفهم العميق لتقنيات الويب الحديثة.
+Passwords are the first line of defense for digital accounts. With the increasing frequency of cyber-attacks and massive data breaches, the average user is at high risk of account compromise due to weak, reused, or previously pwned passwords. Many existing tools lack transparency or require sending the plaintext password to a central server, creating an additional security risk.
 
-### أ. البنية التحتية: Netlify (Serverless)
-
-لماذا اخترنا بنية "عديمة الخادم" بدلاً من خادم تقليدي (مثل PHP/Node.js على سيرفر خاص)؟
-
-1.  **الأمان (Security):** لا يوجد خادم دائم التشغيل لإدارته أو حمايته من الهجمات. يتم تشغيل الكود فقط عند الطلب، مما يقلل بشكل كبير من "مساحة الهجوم" (Attack Surface).
-2.  **قابلية التوسع (Scalability):** تتعامل Netlify مع آلاف الطلبات في نفس الوقت دون أي تدخل يدوي. إذا أصبح التطبيق رائداً، فإنه سيعمل بنفس الكفاءة.
-3.  **التكلفة (Cost-Effectiveness):** الدفع يتم "مقابل الاستخدام" (pay-as-you-go). في النطاق المجاني، يمكننا خدمة آلاف المستخدمين دون أي تكلفة.
-4.  **التركيز على المنطق (Focus):** بدلاً من إضاعة الوقت في إعداد الخوادم وتحديثات الأمان، تم توجيه كل الجهد نحو كتابة "منطق العمل" (Business Logic) الأساسي في ملف `check-password.js`.
-
-### ب. النموذج الأمني: K-Anonymity (الخصوصية أولاً)
-
-لماذا هذا النموذج هو الخيار الاحترافي؟
-
-إن إرسال كلمة مرور المستخدم (حتى لو كانت مُجزأة/Hashed) إلى خدمة طرف ثالث هو ممارسة أمنية سيئة. لذلك، اتبعنا البروتوكول الذي تستخدمه HIBP:
-
-1.  **تجزئة محلية (Local Hashing):** يتم تجزئة (Hashing) كلمة المرور على الخادم الخاص بنا (دالة Netlify) باستخدام `SHA-1`.
-2.  **التقسيم (Partitioning):** يتم تقسيم البصمة (Hash) إلى جزأين: أول 5 أحرف (Prefix) والباقي (Suffix).
-3.  **الاستعلام المجهول (Anonymous Query):** يتم إرسال **فقط** الـ 5 أحرف الأولى إلى HIBP.
-4.  **الاستجابة (Response):** ترد HIBP بقائمة *بجميع* البصمات المسرّبة التي تبدأ بنفس الـ 5 أحرف (قد تكون الآلاف).
-5.  **التحقق المحلي (Local Verification):** يقوم الخادم الخاص بنا بالبحث *محلياً* في هذه القائمة للعثور على (Suffix) الخاص بالمستخدم.
-
-**النتيجة:** خدمة HIBP لا تعرف أبداً كلمة المرور الكاملة أو البصمة الكاملة التي نبحث عنها، مما يحقق "مجهولية" تامة للمستخدم.
-
-### ج. تقييم القوة: مكتبة Zxcvbn
-
-لماذا استخدمنا `zxcvbn` بدلاً من مجرد عدّ الأحرف والرموز؟
-
-الطرق التقليدية (مثل "يجب أن تحتوي على رمز ورقم وحرف كبير") هي طرق قديمة وغير فعالة. مكتبة `zxcvbn` (التي طورتها Dropbox) هي أكثر ذكاءً لأنها:
-
-* تتعرف على الأنماط الشائعة (مثل "qwerty" أو "123456").
-* تقارن الكلمة بقواميس للكلمات الشائعة والأسماء.
-* تحسب "الإنتروبيا" (Entropy) الحقيقية لكلمة المرور (مدى صعوبة تخمينها).
-* لهذا السبب، تعطي تقييماً واقعياً (من 0 إلى 4) مع نصائح بناءة.
+This project addresses this problem by providing a transparent, secure, and user-friendly tool that balances usability with the highest standards of privacy.
 
 ---
 
-## 4. التقنيات المستخدمة
+## 3. Architectural & Security Methodology (The "Why")
 
-* **الواجهة الأمامية (Frontend):** `HTML5`, `CSS3`, `JavaScript (ES6+)`
-* **الخلفية (Backend):** `Node.js` (بيئة التشغيل للدالة)
-* **المنصة السحابية (Platform):** `Netlify` (للاستضافة والدوال عديمة الخادم)
-* **مكتبات رئيسية (Node.js):**
-    * `zxcvbn`: لتقييم قوة كلمة المرور.
-    * `crypto`: لعمليات التجزئة (Hashing).
+Specific engineering decisions were made to ensure the application's performance, security, and scalability, reflecting a deep understanding of modern web technologies.
+
+### A. Infrastructure: Netlify (Serverless)
+
+Why choose a Serverless architecture over a traditional monolithic server (e.g., PHP/Node.js on a VPS)?
+
+1.  **Security:** There is no persistent server to manage, patch, or secure. Code execution is ephemeral, drastically reducing the "Attack Surface."
+2.  **Scalability:** Netlify handles thousands of concurrent requests seamlessly. If the application goes viral, it scales automatically without manual intervention.
+3.  **Cost-Effectiveness:** The model is pay-as-you-go. Within the generous free tier, we can serve thousands of users at zero cost.
+4.  **Developer Focus:** Instead of DevOps overhead (server provisioning, security patches), all effort was directed at the core "Business Logic" in the `check-password.js` function.
+
+### B. Security Model: K-Anonymity (Privacy-by-Design)
+
+Why is this the professional choice?
+
+Sending a user's password (even hashed) to a third-party service is poor security practice. We therefore adopted the HIBP-endorsed protocol:
+
+1.  **Local Hashing:** The password is first hashed within our own serverless function using `SHA-1`.
+2.  **Partitioning:** The hash is split into two parts: the first 5 characters (Prefix) and the rest (Suffix).
+3.  **Anonymous Query:** **Only** the 5-character prefix is sent to the HIBP API.
+4.  **Response:** HIBP returns a list of *all* pwned hash suffixes that match that prefix (potentially thousands).
+5.  **Local Verification:** Our function then *locally* searches this list for the user's suffix.
+
+**The Result:** The HIBP service never knows the full password or the full hash being queried, achieving true k-anonymity for the user.
+
+### C. Strength Estimation: The Zxcvbn Library
+
+Why use `zxcvbn` instead of simple regex (counting symbols, numbers, etc.)?
+
+Traditional "password policy" regex is outdated and ineffective. The `zxcvbn` library (developed by Dropbox) is superior because it:
+
+* Recognizes common patterns (e.g., "qwerty", "123456").
+* Compares against dictionaries of common words, names, and breached passwords.
+* Calculates the true "entropy" (guess-ability) of the password.
+* It provides a realistic score (0-4) and actionable feedback, not just arbitrary rules.
 
 ---
 
-## 5. إرشادات التشغيل والنشر
+## 4. Technology Stack
 
-### أ. النشر على Netlify (الإنتاج)
+* **Frontend:** `HTML5`, `CSS3`, `JavaScript (ES6+)`
+* **Backend:** `Node.js` (Function runtime)
+* **Platform:** `Netlify` (Hosting & Serverless Functions)
+* **Key Libraries (Node.js):**
+    * `zxcvbn`: For advanced password strength estimation.
+    * `crypto`: For SHA-1 hashing operations.
 
-1.  ربط المستودع (Repository) بحساب Netlify.
-2.  ستقرأ Netlify ملف `netlify.toml` تلقائياً.
-3.  **إعدادات البناء:**
+---
+
+## 5. Deployment & Local Setup
+
+### A. Deploying to Netlify (Production)
+
+1.  Connect the GitHub repository to a new Netlify site.
+2.  Netlify will automatically detect and read the `netlify.toml` file.
+3.  **Build Settings:**
     * **Build command:** `npm install`
     * **Publish directory:** `public`
     * **Functions directory:** `netlify/functions`
-4.  سيتم نشر الموقع والدالة تلقائياً.
+4.  The site and function will be deployed automatically.
 
-### ب. التشغيل المحلي (للتطوير)
+### B. Running Locally (Development)
 
-1.  تثبيت `netlify-cli`:
+1.  Install the Netlify CLI:
     ```bash
     npm install -g netlify-cli
     ```
-2.  تثبيت الاعتماديات:
+2.  Install dependencies:
     ```bash
     npm install
     ```
-3.  تشغيل خادم التطوير المحلي:
+3.  Run the local development server:
     ```bash
     netlify dev
     ```
-4.  سيقوم الأمر بتشغيل الواجهة والدالة معاً على `http://localhost`.
+4.  This will serve both the frontend and the function at `http://localhost:8888`.
 
 ---
 
-## 6. آفاق التطوير المستقبلية
+## 6. Future Work
 
-كأي مشروع تقني، هناك دائماً مجال للتحسين:
-
-1.  **فحص إضافي (Local Dictionary):** إضافة قاموس محلي صغير (أكثر 100 كلمة مرور شيوعاً) داخل الدالة لفحصها قبل إرسال الطلب إلى HIBP لتوفير استجابة أسرع للكلمات الواضحة جداً.
-2.  **واجهة تفاعلية:** تحويل شريط القوة والنصائح ليتم تحديثها *أثناء الكتابة* بدلاً من الانتظار حتى الضغط على الزر.
-3.  **دعم لغات متعددة:** إضافة خيار لتبديل اللغة (الإنجليزية/العربية) في الواجهة.
+1.  **Local Dictionary Check:** Implement a small, local dictionary (Top 100 common passwords) within the function to provide an instant response for trivial passwords before querying HIBP.
+2.  **Interactive UI:** Refactor the frontend to provide real-time feedback (strength score) *as the user types*.
+3.  **Internationalization (i18n):** Add language-switching capabilities (e.g., EN/AR) to the frontend.
