@@ -1,189 +1,72 @@
 <!doctype html>
-<html lang="ar">
-
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>فبلاؤراتلانتىمنةموبارلا ىةوالمرور — Sweenah</title>
-  <style>
-    :root {
-      --bg: #0f1724;
-      --card: #0b1220;
-      --accent: #6ee7b7;
-      --muted: #94a3b8;
-      --danger: #fb7185;
-      --glass: rgba(255, 255, 255, 0.03)
-    }
-
-    body {
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
-      background: linear-gradient(180deg, #071021 0%, #081827 100%);
-      color: #e6eef8;
-      margin: 0;
-      padding: 28px;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      min-height: 100vh
-    }
-
-    .card {
-      width: 100%;
-      max-width: 760px;
-      background: var(--card);
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 6px 30px rgba(2, 6, 23, 0.6);
-      backdrop-filter: blur(4px)
-    }
-
-    h1 {
-      margin: 0 0 8px;
-      font-size: 20px
-    }
-
-    p.lead {
-      margin: 0 0 18px;
-      color: var(--muted)
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      color: var(--muted);
-      font-size: 13px
-    }
-
-    .row {
-      display: flex;
-      gap: 12px;
-      align-items: center
-    }
-
-    input[type="password"] {
-      flex: 1;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      background: var(--glass);
-      color: inherit;
-      font-size: 15px
-    }
-
-    button {
-      background: linear-gradient(90deg, var(--accent), #34d399);
-      border: none;
-      padding: 10px 14px;
-      border-radius: 10px;
-      color: #042018;
-      font-weight: 600;
-      cursor: pointer
-    }
-
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed
-    }
-
-    .meta {
-      margin-top: 14px;
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      flex-wrap: wrap
-    }
-
-    .chip {
-      background: rgba(255, 255, 255, 0.03);
-      padding: 8px 10px;
-      border-radius: 10px;
-      font-size: 13px;
-      color: var(--muted)
-    }
-
-    .result {
-      margin-top: 18px;
-      padding: 14px;
-      border-radius: 10px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.012), transparent);
-      border: 1px solid rgba(255, 255, 255, 0.02)
-    }
-
-    .status-ok {
-      color: #a7f3d0
-    }
-
-    .status-bad {
-      color: var(--danger)
-    }
-
-    .strength-bar {
-      height: 10px;
-      background: rgba(255, 255, 255, 0.06);
-      border-radius: 6px;
-      overflow: hidden;
-      margin-top: 8px
-    }
-
-    .strength-fill {
-      height: 100%;
-      width: 0%;
-      transition: width .4s ease
-    }
-
-    .suggestion {
-      margin-top: 12px;
-      display: flex;
-      gap: 10px;
-      align-items: center
-    }
-
-    .suggestion input {
-      flex: 1;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      background: transparent;
-      color: inherit
-    }
-
-    .small {
-      font-size: 13px;
-      color: var(--muted)
-    }
-
-    .feedback {
-      margin-top: 10px;
-      color: var(--muted);
-      font-size: 13px
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>فاحص أمان كلمة المرور (مشروع تخرج)</title>
+<style>
+  :root{--bg:#0f1724;--card:#0b1220;--accent:#6ee7b7;--muted:#94a3b8;--danger:#fb7185;--glass:rgba(255,255,255,0.03)}
+  body{font-family:'Cairo', system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; background:linear-gradient(180deg,#071021 0%, #081827 100%); color:#e6eef8; margin:0; padding:28px; display:flex; align-items:flex-start; justify-content:center; min-height:100vh}
+  .card{width:100%;max-width:760px;background:var(--card);border-radius:12px;padding:20px 30px;box-shadow:0 6px 30px rgba(2,6,23,0.6);backdrop-filter:blur(4px)}
+  h1{margin:0 0 8px;font-size:22px}
+  p.lead{margin:0 0 18px;color:var(--muted)}
+  label{display:block;margin-bottom:8px;color:var(--muted);font-size:13px;font-weight:600;}
+  .row{display:flex;gap:12px;align-items:center}
+  .input-wrapper{flex:1;position:relative}
+  input[type="password"], input[type="text"]{width:100%;box-sizing:border-box;padding:12px 14px; padding-left: 45px; border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:inherit;font-size:15px}
+  #togglePw{position:absolute;left:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;opacity:0.6;font-size: 20px; padding: 5px;}
+  #togglePw:hover{opacity:1}
+  button{background:linear-gradient(90deg,var(--accent),#34d399);border:none;padding:12px 16px;border-radius:10px;color:#042018;font-weight:600;cursor:pointer;font-family:inherit;font-size:15px;}
+  button:disabled{opacity:0.5;cursor:not-allowed}
+  .meta{margin-top:14px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .chip{background:rgba(255,255,255,0.03);padding:8px 10px;border-radius:10px;font-size:13px;color:var(--muted)}
+  .result{margin-top:18px;padding:14px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.012), transparent);border:1px solid rgba(255,255,255,0.02)}
+  .status-ok{color:#a7f3d0}
+  .status-bad{color:var(--danger)}
+  .strength-bar{height:10px;background:rgba(255,255,255,0.06);border-radius:6px;overflow:hidden;margin-top:8px}
+  .strength-fill{height:100%;width:0%;transition:width .4s ease; background:linear-gradient(90deg,#f97316,#f59e0b,#84cc16)}
+  .suggestion{margin-top:12px;display:flex;gap:10px;align-items:center}
+  .suggestion input{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+  .small{font-size:13px;color:var(--muted)}
+  .feedback{margin-top:10px;color:var(--muted);font-size:13px}
+  .options{display:flex;gap:10px;align-items:center;margin-top:10px;}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
   <div class="card" role="main" aria-labelledby="title">
-    <h1 id="title">فحص كلمة بيلاتنمتالاتراؤبلؤلانتى لاىاؤللنتمىنةالمرور — Sweenah</h1>
-    <p class="lead">أدخل كلمة المرور أدناه لنعرف إن كانت مخترقة ونقترح لك كلمة أقوى.</p>
+    <h1 id="title">فاحص أمان كلمة المرور</h1>
+    <p class="lead">أداة تحليل أمني لفحص قوة كلمات المرور والتحقق من وجودها في التسريبات المعروفة.</p>
 
-    <label for="pw">كلمة المرور</label>
+    <label for="pw">كلمة المرور المراد فحصها</label>
     <div class="row">
-      <input id="pw" type="password" placeholder="اكتب كلمة المرور هنا..." aria-label="كلمة المرور" />
-      <button id="checkBtn">تحقق</button>
+      <div class="input-wrapper">
+        <input id="pw" type="password" placeholder="اكتب كلمة المرور هنا..." aria-label="كلمة المرور" />
+        <button id="togglePw" aria-label="إظهار أو إخفاء كلمة المرور">👁️</button>
+      </div>
+      <button id="checkBtn">تحقق الآن</button>
+    </div>
+    
+    <div class="options small">
+      <label for="pwLength" style="margin-bottom:0;">طول الكلمة المقترحة:</label>
+      <select id="pwLength" style="background:var(--glass);color:inherit;border:none;padding:4px;border-radius:4px;">
+        <option value="12">12 حرف (جيد)</option>
+        <option value="16" selected>16 حرف (قوي)</option>
+        <option value="20">20 حرف (آمن جداً)</option>
+      </select>
     </div>
 
     <div class="meta">
-      <div class="chip">النتيجة تُعرض بدون تخزين</div>
-      <div class="chip small">نستخدم k-anonymity مع HIBP — لا نرسل كلمة المرور كاملة</div>
+      <div class="chip small">نستخدم k-anonymity — لا نرسل كلمة المرور كاملة لأي جهة</div>
     </div>
 
     <div id="result" class="result" style="display:none">
       <div id="pwnedStatus" class="small"></div>
       <div style="margin-top:10px">
-        <div class="small">قوة الكلمة (تقييم)</div>
-        <div class="strength-bar" aria-hidden="true">
-          <div id="strengthFill" class="strength-fill"
-            style="background:linear-gradient(90deg,#f97316,#f59e0b,#84cc16)"></div>
-        </div>
+        <div class="small">مقياس القوة (Zxcvbn Score)</div>
+        <div class="strength-bar" aria-hidden="true"><div id="strengthFill" class="strength-fill"></div></div>
         <div id="strengthText" class="small" style="margin-top:6px"></div>
       </div>
 
@@ -196,100 +79,142 @@
 
       <div id="feedback" class="feedback"></div>
     </div>
-
-    <p class="small" style="margin-top:14px">ملاحظة: لا تقم بلصق كلمة مرور حساسة هنا إذا لم تكن مرتكبًا تجربة محلية.
-      الخدمة تستخدم HIBP بطريقة آمنة.</p>
   </div>
 
-  <script>
-    const checkBtn = document.getElementById('checkBtn');
-    const pwInput = document.getElementById('pw');
-    const resultEl = document.getElementById('result');
-    const pwnedStatus = document.getElementById('pwnedStatus');
-    const pwnedDetails = document.getElementById('pwnedDetails');
-    const strengthFill = document.getElementById('strengthFill');
-    const strengthText = document.getElementById('strengthText');
-    const suggestionBox = document.getElementById('suggestionBox');
-    const suggestedPw = document.getElementById('suggestedPw');
-    const copyBtn = document.getElementById('copyBtn');
-    const feedbackEl = document.getElementById('feedback');
+<script>
+  // --- 1. ربط عناصر الواجهة ---
+  const checkBtn = document.getElementById('checkBtn');
+  const pwInput = document.getElementById('pw');
+  const togglePw = document.getElementById('togglePw');
+  const pwLengthSelect = document.getElementById('pwLength');
+  
+  const resultEl = document.getElementById('result');
+  const pwnedStatus = document.getElementById('pwnedStatus');
+  const pwnedDetails = document.getElementById('pwnedDetails');
+  const strengthFill = document.getElementById('strengthFill');
+  const strengthText = document.getElementById('strengthText');
+  const suggestionBox = document.getElementById('suggestionBox');
+  const suggestedPw = document.getElementById('suggestedPw');
+  const copyBtn = document.getElementById('copyBtn');
+  const feedbackEl = document.getElementById('feedback');
 
-    function setStrength(score) {
-      const pct = Math.round((score / 4) * 100);
-      strengthFill.style.width = pct + '%';
-      const labels = ['ضعيفة جداً', 'ضعيفة', 'متوسطة', 'قوية', 'قوية جداً'];
-      strengthText.textContent = labels[score] || '';
+  // --- 2. دوال مساعدة ---
+
+  /**
+   * دالة لتحديث شريط القوة والنص بناءً على التقييم (0-4)
+   * @param {number} score - التقييم من 0 إلى 4
+   */
+  function setStrength(score) {
+    const pct = Math.round((score / 4) * 100);
+    strengthFill.style.width = pct + '%';
+    // تغيير ألوان الشريط بناءً على القوة
+    if (score < 2) {
+      strengthFill.style.background = 'linear-gradient(90deg,#ef4444,#f97316)';
+    } else if (score < 4) {
+      strengthFill.style.background = 'linear-gradient(90deg,#f59e0b,#eab308,#84cc16)';
+    } else {
+      strengthFill.style.background = 'linear-gradient(90deg,#84cc16,#22c55e)';
     }
+    const labels = ['ضعيفة جداً','ضعيفة','متوسطة','قوية','قوية جداً'];
+    strengthText.textContent = `التقييم: ${labels[score] || 'غير معروف'} (${score}/4)`;
+  }
 
-    async function checkPasswordOnServer(password) {
-      const resp = await fetch('/.netlify/functions/check-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password })
-      });
-      if (!resp.ok) {
-        const t = await resp.text();
-        throw new Error('Server error: ' + t);
-      }
-      return resp.json();
+  /**
+   * دالة الاتصال بالخلفية (Netlify Function)
+   * @param {string} password - كلمة المرور للفحص
+   * @param {number} length - الطول المطلوب للكلمة المقترحة
+   */
+  async function checkPasswordOnServer(password, length) {
+    const resp = await fetch('/.netlify/functions/check-password', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      // إرسال كلمة المرور والطول المطلوب
+      body: JSON.stringify({ password: password, length: length })
+    });
+    if (!resp.ok) {
+      const t = await resp.text();
+      throw new Error('Server error: ' + t);
     }
+    return resp.json();
+  }
 
-    checkBtn.addEventListener('click', async () => {
-      const pw = pwInput.value.trim();
-      if (!pw) { alert('أدخل كلمة المرور'); return; }
-      checkBtn.disabled = true;
-      checkBtn.textContent = 'جاري الفحص...';
-      resultEl.style.display = 'none';
-      suggestionBox.style.display = 'none';
-      feedbackEl.textContent = '';
+  // --- 3. ربط الأحداث ---
 
-      try {
-        const data = await checkPasswordOnServer(pw);
-        resultEl.style.display = 'block';
-        setStrength(data.strength_score ?? 0);
+  // الحدث الرئيسي: الضغط على زر "تحقق"
+  checkBtn.addEventListener('click', async () => {
+    const pw = pwInput.value; // لا نستخدم trim() للسماح بالمسافات إذا أراد المستخدم
+    if (!pw) { alert('الرجاء إدخال كلمة المرور لفحصها'); return; }
+    
+    // قراءة الطول المطلوب من القائمة المنسدلة
+    const desiredLength = parseInt(pwLengthSelect.value, 10);
 
-        if (data.pwned) {
-          pwnedStatus.innerHTML = '<strong class="status-bad">تم العثور على الكلمة في تسريبات</strong>';
-          pwnedDetails.innerHTML = `<div class="small">عدد مرات الظهور (تقريبية): <strong>${data.pwned_count ?? 'غير متوفر'}</strong></div>`;
-        } else {
-          pwnedStatus.innerHTML = '<strong class="status-ok">لم يتم العثور على الكلمة في قواعد التسريبات المعروفة</strong>';
-          pwnedDetails.innerHTML = '';
-        }
+    // تعطيل الزر وإظهار حالة التحميل
+    checkBtn.disabled = true;
+    checkBtn.textContent = 'جاري الفحص...';
+    resultEl.style.display = 'none';
+    suggestionBox.style.display = 'none';
+    feedbackEl.textContent = '';
 
-        if (data.suggested_password) {
-          suggestionBox.style.display = 'flex';
-          suggestedPw.value = data.suggested_password;
-        } else {
-          suggestionBox.style.display = 'none';
-        }
+    try {
+      // استدعاء الدالة الخلفية وانتظار الرد
+      const data = await checkPasswordOnServer(pw, desiredLength);
+      
+      // إظهار النتائج
+      resultEl.style.display = 'block';
+      setStrength(data.strength_score ?? 0);
 
-        if (data.strength_feedback && data.strength_feedback.warning) {
-          feedbackEl.textContent = data.strength_feedback.warning;
-        } else if (data.strength_feedback && data.strength_feedback.suggestions) {
-          feedbackEl.textContent = (data.strength_feedback.suggestions || []).join(' - ');
-        } else {
-          feedbackEl.textContent = '';
-        }
-
-      } catch (err) {
-        alert('خطأ: ' + err.message);
-      } finally {
-        checkBtn.disabled = false;
-        checkBtn.textContent = 'تحقق';
+      // 1. نتيجة الفحص (التسريبات)
+      if (data.pwned) {
+        pwnedStatus.innerHTML = `<strong class="status-bad">⚠️ تم العثور على الكلمة في تسريبات سابقة!</strong>`;
+        pwnedDetails.innerHTML = `<div class="small">عدد مرات الظهور (تقريبية): <strong>${data.pwned_count ?? 'غير متوفر'}</strong>. ننصح بتغييرها فوراً.</div>`;
+      } else {
+        pwnedStatus.innerHTML = `<strong class="status-ok">✅ لم يتم العثور على الكلمة في قواعد التسريبات المعروفة.</strong>`;
+        pwnedDetails.innerHTML = '';
       }
-    });
 
-    copyBtn.addEventListener('click', async () => {
-      const val = suggestedPw.value;
-      try {
-        await navigator.clipboard.writeText(val);
-        copyBtn.textContent = 'تم النسخ';
-        setTimeout(() => copyBtn.textContent = 'نسخ', 2000);
-      } catch (e) {
-        alert('فشل النسخ: ' + e.message);
+      // 2. عرض الكلمة المقترحة
+      if (data.suggested_password) {
+        suggestionBox.style.display = 'flex';
+        suggestedPw.value = data.suggested_password;
+      } else {
+        suggestionBox.style.display = 'none';
       }
-    });
-  </script>
+
+      // 3. عرض الملاحظات والاقتراحات
+      let feedbackMsg = '';
+      if (data.strength_feedback && data.strength_feedback.warning) {
+        feedbackMsg = data.strength_feedback.warning;
+      } else if (data.strength_feedback && data.strength_feedback.suggestions && data.strength_feedback.suggestions.length > 0) {
+        feedbackMsg = "نصائح لتقوية الكلمة: " + data.strength_feedback.suggestions.join(' - ');
+      }
+      feedbackEl.textContent = feedbackMsg;
+
+    } catch (err) {
+      alert('حدث خطأ أثناء الاتصال بالخادم: ' + err.message);
+    } finally {
+      // إعادة تفعيل الزر في كل الأحوال
+      checkBtn.disabled = false;
+      checkBtn.textContent = 'تحقق الآن';
+    }
+  });
+
+  // حدث الضغط على زر "نسخ"
+  copyBtn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(suggestedPw.value);
+      copyBtn.textContent = 'تم النسخ';
+      setTimeout(()=>copyBtn.textContent = 'نسخ', 2000);
+    } catch (e) {
+      alert('فشل النسخ: ' + e.message);
+    }
+  });
+
+  // حدث الضغط على زر "إظهار/إخفاء"
+  togglePw.addEventListener('click', () => {
+    const isPassword = pwInput.type === 'password';
+    pwInput.type = isPassword ? 'text' : 'password';
+    togglePw.textContent = isPassword ? '🙈' : '👁️';
+  });
+</script>
 </body>
-
 </html>
