@@ -1,20 +1,23 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>فاحص أمان كلمة المرور (مشروع تخرج)</title>
+<title>Password Security Analyzer (Graduation Project)</title>
 <style>
   :root{--bg:#0f1724;--card:#0b1220;--accent:#6ee7b7;--muted:#94a3b8;--danger:#fb7185;--glass:rgba(255,255,255,0.03)}
-  body{font-family:'Cairo', system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; background:linear-gradient(180deg,#071021 0%, #081827 100%); color:#e6eef8; margin:0; padding:28px; display:flex; align-items:flex-start; justify-content:center; min-height:100vh}
+  /* Using a clean, modern font like Inter */
+  body{font-family:'Inter', system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial; background:linear-gradient(180deg,#071021 0%, #081827 100%); color:#e6eef8; margin:0; padding:28px; display:flex; align-items:flex-start; justify-content:center; min-height:100vh}
   .card{width:100%;max-width:760px;background:var(--card);border-radius:12px;padding:20px 30px;box-shadow:0 6px 30px rgba(2,6,23,0.6);backdrop-filter:blur(4px)}
   h1{margin:0 0 8px;font-size:22px}
   p.lead{margin:0 0 18px;color:var(--muted)}
   label{display:block;margin-bottom:8px;color:var(--muted);font-size:13px;font-weight:600;}
   .row{display:flex;gap:12px;align-items:center}
   .input-wrapper{flex:1;position:relative}
-  input[type="password"], input[type="text"]{width:100%;box-sizing:border-box;padding:12px 14px; padding-left: 45px; border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:inherit;font-size:15px}
-  #togglePw{position:absolute;left:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;opacity:0.6;font-size: 20px; padding: 5px;}
+  /* Adjusted padding for LTR layout */
+  input[type="password"], input[type="text"]{width:100%;box-sizing:border-box;padding:12px 14px; padding-right: 45px; border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:var(--glass);color:inherit;font-size:15px}
+  /* Positioned toggle button on the right for LTR */
+  #togglePw{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;opacity:0.6;font-size: 20px; padding: 5px;}
   #togglePw:hover{opacity:1}
   button{background:linear-gradient(90deg,var(--accent),#34d399);border:none;padding:12px 16px;border-radius:10px;color:#042018;font-weight:600;cursor:pointer;font-family:inherit;font-size:15px;}
   button:disabled{opacity:0.5;cursor:not-allowed}
@@ -33,39 +36,39 @@
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="card" role="main" aria-labelledby="title">
-    <h1 id="title">فاحص أمان كلمة المرور</h1>
-    <p class="lead">أداة تحليل أمني لفحص قوة كلمات المرور والتحقق من وجودها في التسريبات المعروفة.</p>
+    <h1 id="title">Password Security Analyzer</h1>
+    <p class="lead">A security tool to analyze password strength and check against known data breaches.</p>
 
-    <label for="pw">كلمة المرور المراد فحصها</label>
+    <label for="pw">Password to Check</label>
     <div class="row">
       <div class="input-wrapper">
-        <input id="pw" type="password" placeholder="اكتب كلمة المرور هنا..." aria-label="كلمة المرور" />
-        <button id="togglePw" aria-label="إظهار أو إخفاء كلمة المرور">👁️</button>
+        <input id="pw" type="password" placeholder="Enter your password here..." aria-label="Password" />
+        <button id="togglePw" aria-label="Show or hide password">👁️</button>
       </div>
-      <button id="checkBtn">تحقق الآن</button>
+      <button id="checkBtn">Check Now</button>
     </div>
     
     <div class="options small">
-      <label for="pwLength" style="margin-bottom:0;">طول الكلمة المقترحة:</label>
+      <label for="pwLength" style="margin-bottom:0;">Suggested Password Length:</label>
       <select id="pwLength" style="background:var(--glass);color:inherit;border:none;padding:4px;border-radius:4px;">
-        <option value="12">12 حرف (جيد)</option>
-        <option value="16" selected>16 حرف (قوي)</option>
-        <option value="20">20 حرف (آمن جداً)</option>
+        <option value="12">12 Chars (Good)</option>
+        <option value="16" selected>16 Chars (Strong)</option>
+        <option value="20">20 Chars (Very Secure)</option>
       </select>
     </div>
 
     <div class="meta">
-      <div class="chip small">نستخدم k-anonymity — لا نرسل كلمة المرور كاملة لأي جهة</div>
+      <div class="chip small">Using k-anonymity — Your full password is never sent anywhere</div>
     </div>
 
     <div id="result" class="result" style="display:none">
       <div id="pwnedStatus" class="small"></div>
       <div style="margin-top:10px">
-        <div class="small">مقياس القوة (Zxcvbn Score)</div>
+        <div class="small">Strength Meter (Zxcvbn Score)</div>
         <div class="strength-bar" aria-hidden="true"><div id="strengthFill" class="strength-fill"></div></div>
         <div id="strengthText" class="small" style="margin-top:6px"></div>
       </div>
@@ -74,7 +77,7 @@
 
       <div class="suggestion" id="suggestionBox" style="display:none">
         <input id="suggestedPw" readonly />
-        <button id="copyBtn">نسخ</button>
+        <button id="copyBtn">Copy</button>
       </div>
 
       <div id="feedback" class="feedback"></div>
@@ -82,7 +85,7 @@
   </div>
 
 <script>
-  // --- 1. ربط عناصر الواجهة ---
+  // --- 1. DOM Element Selection ---
   const checkBtn = document.getElementById('checkBtn');
   const pwInput = document.getElementById('pw');
   const togglePw = document.getElementById('togglePw');
@@ -98,16 +101,16 @@
   const copyBtn = document.getElementById('copyBtn');
   const feedbackEl = document.getElementById('feedback');
 
-  // --- 2. دوال مساعدة ---
+  // --- 2. Helper Functions ---
 
   /**
-   * دالة لتحديث شريط القوة والنص بناءً على التقييم (0-4)
-   * @param {number} score - التقييم من 0 إلى 4
+   * Updates the strength bar and text based on the score (0-4)
+   * @param {number} score - The zxcvbn score from 0 to 4
    */
   function setStrength(score) {
     const pct = Math.round((score / 4) * 100);
     strengthFill.style.width = pct + '%';
-    // تغيير ألوان الشريط بناءً على القوة
+    // Change bar color based on strength
     if (score < 2) {
       strengthFill.style.background = 'linear-gradient(90deg,#ef4444,#f97316)';
     } else if (score < 4) {
@@ -115,20 +118,20 @@
     } else {
       strengthFill.style.background = 'linear-gradient(90deg,#84cc16,#22c55e)';
     }
-    const labels = ['ضعيفة جداً','ضعيفة','متوسطة','قوية','قوية جداً'];
-    strengthText.textContent = `التقييم: ${labels[score] || 'غير معروف'} (${score}/4)`;
+    const labels = ['Very Weak','Weak','Medium','Strong','Very Strong'];
+    strengthText.textContent = `Score: ${labels[score] || 'Unknown'} (${score}/4)`;
   }
 
   /**
-   * دالة الاتصال بالخلفية (Netlify Function)
-   * @param {string} password - كلمة المرور للفحص
-   * @param {number} length - الطول المطلوب للكلمة المقترحة
+   * Calls the backend Netlify Function
+   * @param {string} password - The password to check
+   * @param {number} length - The desired length for the suggested password
    */
   async function checkPasswordOnServer(password, length) {
     const resp = await fetch('/.netlify/functions/check-password', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
-      // إرسال كلمة المرور والطول المطلوب
+      // Send both the password and the desired length
       body: JSON.stringify({ password: password, length: length })
     });
     if (!resp.ok) {
@@ -138,41 +141,41 @@
     return resp.json();
   }
 
-  // --- 3. ربط الأحداث ---
+  // --- 3. Event Listeners ---
 
-  // الحدث الرئيسي: الضغط على زر "تحقق"
+  // Main Event: "Check Now" button click
   checkBtn.addEventListener('click', async () => {
-    const pw = pwInput.value; // لا نستخدم trim() للسماح بالمسافات إذا أراد المستخدم
-    if (!pw) { alert('الرجاء إدخال كلمة المرور لفحصها'); return; }
+    const pw = pwInput.value; // Don't trim() to allow spaces if the user intends it
+    if (!pw) { alert('Please enter a password to check'); return; }
     
-    // قراءة الطول المطلوب من القائمة المنسدلة
+    // Get the desired length from the dropdown
     const desiredLength = parseInt(pwLengthSelect.value, 10);
 
-    // تعطيل الزر وإظهار حالة التحميل
+    // Disable button and show loading state
     checkBtn.disabled = true;
-    checkBtn.textContent = 'جاري الفحص...';
+    checkBtn.textContent = 'Checking...';
     resultEl.style.display = 'none';
     suggestionBox.style.display = 'none';
     feedbackEl.textContent = '';
 
     try {
-      // استدعاء الدالة الخلفية وانتظار الرد
+      // Call the backend function and wait for the response
       const data = await checkPasswordOnServer(pw, desiredLength);
       
-      // إظهار النتائج
+      // Display results
       resultEl.style.display = 'block';
       setStrength(data.strength_score ?? 0);
 
-      // 1. نتيجة الفحص (التسريبات)
+      // 1. Pwned Check Result
       if (data.pwned) {
-        pwnedStatus.innerHTML = `<strong class="status-bad">⚠️ تم العثور على الكلمة في تسريبات سابقة!</strong>`;
-        pwnedDetails.innerHTML = `<div class="small">عدد مرات الظهور (تقريبية): <strong>${data.pwned_count ?? 'غير متوفر'}</strong>. ننصح بتغييرها فوراً.</div>`;
+        pwnedStatus.innerHTML = `<strong class="status-bad">⚠️ This password has been found in a data breach!</strong>`;
+        pwnedDetails.innerHTML = `<div class="small">Found approximately <strong>${data.pwned_count ?? 'N/A'}</strong> times. We strongly recommend changing it.</div>`;
       } else {
-        pwnedStatus.innerHTML = `<strong class="status-ok">✅ لم يتم العثور على الكلمة في قواعد التسريبات المعروفة.</strong>`;
+        pwnedStatus.innerHTML = `<strong class="status-ok">✅ This password was not found in known data breaches.</strong>`;
         pwnedDetails.innerHTML = '';
       }
 
-      // 2. عرض الكلمة المقترحة
+      // 2. Display Suggested Password
       if (data.suggested_password) {
         suggestionBox.style.display = 'flex';
         suggestedPw.value = data.suggested_password;
@@ -180,36 +183,36 @@
         suggestionBox.style.display = 'none';
       }
 
-      // 3. عرض الملاحظات والاقتراحات
+      // 3. Display Feedback and Suggestions
       let feedbackMsg = '';
       if (data.strength_feedback && data.strength_feedback.warning) {
         feedbackMsg = data.strength_feedback.warning;
       } else if (data.strength_feedback && data.strength_feedback.suggestions && data.strength_feedback.suggestions.length > 0) {
-        feedbackMsg = "نصائح لتقوية الكلمة: " + data.strength_feedback.suggestions.join(' - ');
+        feedbackMsg = "Suggestions to improve: " + data.strength_feedback.suggestions.join(' - ');
       }
       feedbackEl.textContent = feedbackMsg;
 
     } catch (err) {
-      alert('حدث خطأ أثناء الاتصال بالخادم: ' + err.message);
+      alert('Error contacting server: ' + err.message);
     } finally {
-      // إعادة تفعيل الزر في كل الأحوال
+      // Re-enable the button regardless of success or failure
       checkBtn.disabled = false;
-      checkBtn.textContent = 'تحقق الآن';
+      checkBtn.textContent = 'Check Now';
     }
   });
 
-  // حدث الضغط على زر "نسخ"
+  // "Copy" button click
   copyBtn.addEventListener('click', async () => {
     try {
       await navigator.clipboard.writeText(suggestedPw.value);
-      copyBtn.textContent = 'تم النسخ';
-      setTimeout(()=>copyBtn.textContent = 'نسخ', 2000);
+      copyBtn.textContent = 'Copied!';
+      setTimeout(()=>copyBtn.textContent = 'Copy', 2000);
     } catch (e) {
-      alert('فشل النسخ: ' + e.message);
+      alert('Failed to copy: ' + e.message);
     }
   });
 
-  // حدث الضغط على زر "إظهار/إخفاء"
+  // "Show/Hide" toggle button click
   togglePw.addEventListener('click', () => {
     const isPassword = pwInput.type === 'password';
     pwInput.type = isPassword ? 'text' : 'password';
