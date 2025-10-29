@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="ar">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>فحص كلمة المرور — Sweenah</title>
+  <style>
+    :root {
+      --bg: #0f1724;
+      --card: #0b1220;
+      --accent: #6ee7b7;
+      --muted: #94a3b8;
+      --danger: #fb7185;
+      --glass: rgba(255, 255, 255, 0.03)
+    }
+
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg, #071021 0%, #081827 100%);
+      color: #e6eef8;
+      margin: 0;
+      padding: 28px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      min-height: 100vh
+    }
+
+    .card {
+      width: 100%;
+      max-width: 760px;
+      background: var(--card);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 6px 30px rgba(2, 6, 23, 0.6);
+      backdrop-filter: blur(4px)
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 20px
+    }
+
+    p.lead {
+      margin: 0 0 18px;
+      color: var(--muted)
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 13px
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      align-items: center
+    }
+
+    input[type="password"] {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      background: var(--glass);
+      color: inherit;
+      font-size: 15px
+    }
+
+    button {
+      background: linear-gradient(90deg, var(--accent), #34d399);
+      border: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      color: #042018;
+      font-weight: 600;
+      cursor: pointer
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed
+    }
+
+    .meta {
+      margin-top: 14px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap
+    }
+
+    .chip {
+      background: rgba(255, 255, 255, 0.03);
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      color: var(--muted)
+    }
+
+    .result {
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.012), transparent);
+      border: 1px solid rgba(255, 255, 255, 0.02)
+    }
+
+    .status-ok {
+      color: #a7f3d0
+    }
+
+    .status-bad {
+      color: var(--danger)
+    }
+
+    .strength-bar {
+      height: 10px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-top: 8px
+    }
+
+    .strength-fill {
+      height: 100%;
+      width: 0%;
+      transition: width .4s ease
+    }
+
+    .suggestion {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+      align-items: center
+    }
+
+    .suggestion input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      background: transparent;
+      color: inherit
+    }
+
+    .small {
+      font-size: 13px;
+      color: var(--muted)
+    }
+
+    .feedback {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card" role="main" aria-labelledby="title">
+    <h1 id="title">فحص كلمة المرور — Sweenah</h1>
+    <p class="lead">أدخل كلمة المرور أدناه لنعرف إن كانت مخترقة ونقترح لك كلمة أقوى.</p>
+
+    <label for="pw">كلمة المرور</label>
+    <div class="row">
+      <input id="pw" type="password" placeholder="اكتب كلمة المرور هنا..." aria-label="كلمة المرور" />
+      <button id="checkBtn">تحقق</button>
+    </div>
+
+    <div class="meta">
+      <div class="chip">النتيجة تُعرض بدون تخزين</div>
+      <div class="chip small">نستخدم k-anonymity مع HIBP — لا نرسل كلمة المرور كاملة</div>
+    </div>
+
+    <div id="result" class="result" style="display:none">
+      <div id="pwnedStatus" class="small"></div>
+      <div style="margin-top:10px">
+        <div class="small">قوة الكلمة (تقييم)</div>
+        <div class="strength-bar" aria-hidden="true">
+          <div id="strengthFill" class="strength-fill"
+            style="background:linear-gradient(90deg,#f97316,#f59e0b,#84cc16)"></div>
+        </div>
+        <div id="strengthText" class="small" style="margin-top:6px"></div>
+      </div>
+
+      <div id="pwnedDetails" style="margin-top:12px"></div>
+
+      <div class="suggestion" id="suggestionBox" style="display:none">
+        <input id="suggestedPw" readonly />
+        <button id="copyBtn">نسخ</button>
+      </div>
+
+      <div id="feedback" class="feedback"></div>
+    </div>
+
+    <p class="small" style="margin-top:14px">ملاحظة: لا تقم بلصق كلمة مرور حساسة هنا إذا لم تكن مرتكبًا تجربة محلية.
+      الخدمة تستخدم HIBP بطريقة آمنة.</p>
+  </div>
+
+  <script>
+    const checkBtn = document.getElementById('checkBtn');
+    const pwInput = document.getElementById('pw');
+    const resultEl = document.getElementById('result');
+    const pwnedStatus = document.getElementById('pwnedStatus');
+    const pwnedDetails = document.getElementById('pwnedDetails');
+    const strengthFill = document.getElementById('strengthFill');
+    const strengthText = document.getElementById('strengthText');
+    const suggestionBox = document.getElementById('suggestionBox');
+    const suggestedPw = document.getElementById('suggestedPw');
+    const copyBtn = document.getElementById('copyBtn');
+    const feedbackEl = document.getElementById('feedback');
+
+    function setStrength(score) {
+      const pct = Math.round((score / 4) * 100);
+      strengthFill.style.width = pct + '%';
+      const labels = ['ضعيفة جداً', 'ضعيفة', 'متوسطة', 'قوية', 'قوية جداً'];
+      strengthText.textContent = labels[score] || '';
+    }
+
+    async function checkPasswordOnServer(password) {
+      const resp = await fetch('/.netlify/functions/check-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password })
+      });
+      if (!resp.ok) {
+        const t = await resp.text();
+        throw new Error('Server error: ' + t);
+      }
+      return resp.json();
+    }
+
+    checkBtn.addEventListener('click', async () => {
+      const pw = pwInput.value.trim();
+      if (!pw) { alert('أدخل كلمة المرور'); return; }
+      checkBtn.disabled = true;
+      checkBtn.textContent = 'جاري الفحص...';
+      resultEl.style.display = 'none';
+      suggestionBox.style.display = 'none';
+      feedbackEl.textContent = '';
+
+      try {
+        const data = await checkPasswordOnServer(pw);
+        resultEl.style.display = 'block';
+        setStrength(data.strength_score ?? 0);
+
+        if (data.pwned) {
+          pwnedStatus.innerHTML = '<strong class="status-bad">تم العثور على الكلمة في تسريبات</strong>';
+          pwnedDetails.innerHTML = `<div class="small">عدد مرات الظهور (تقريبية): <strong>${data.pwned_count ?? 'غير متوفر'}</strong></div>`;
+        } else {
+          pwnedStatus.innerHTML = '<strong class="status-ok">لم يتم العثور على الكلمة في قواعد التسريبات المعروفة</strong>';
+          pwnedDetails.innerHTML = '';
+        }
+
+        if (data.suggested_password) {
+          suggestionBox.style.display = 'flex';
+          suggestedPw.value = data.suggested_password;
+        } else {
+          suggestionBox.style.display = 'none';
+        }
+
+        if (data.strength_feedback && data.strength_feedback.warning) {
+          feedbackEl.textContent = data.strength_feedback.warning;
+        } else if (data.strength_feedback && data.strength_feedback.suggestions) {
+          feedbackEl.textContent = (data.strength_feedback.suggestions || []).join(' - ');
+        } else {
+          feedbackEl.textContent = '';
+        }
+
+      } catch (err) {
+        alert('خطأ: ' + err.message);
+      } finally {
+        checkBtn.disabled = false;
+        checkBtn.textContent = 'تحقق';
+      }
+    });
+
+    copyBtn.addEventListener('click', async () => {
+      const val = suggestedPw.value;
+      try {
+        await navigator.clipboard.writeText(val);
+        copyBtn.textContent = 'تم النسخ';
+        setTimeout(() => copyBtn.textContent = 'نسخ', 2000);
+      } catch (e) {
+        alert('فشل النسخ: ' + e.message);
+      }
+    });
+  </script>
+</body>
+
+</html>
